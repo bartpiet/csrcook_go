@@ -1,13 +1,19 @@
 package main
 
 import "fmt"
-import "os"
+import "strings"
 import "crypto/rsa"
 import "crypto/rand"
 import "crypto/x509"
 import "encoding/pem"
 
 func main() {
+	csr, key := generateKeyAndCsr()
+	fmt.Println(csr)
+	fmt.Println(key)
+}
+
+func generateKeyAndCsr() (csr_str string, key_str string) {
 	fmt.Println("Generating RSA keypair...")
 
 	key, error := rsa.GenerateKey(rand.Reader, 2048)
@@ -36,6 +42,13 @@ func main() {
 		Bytes: marshalled_key,
 	}
 
-	pem.Encode(os.Stdout, csr_block)
-	pem.Encode(os.Stdout, pkey_block)
+	encoded_csr := new(strings.Builder)
+	encoded_key := new(strings.Builder)
+
+	pem.Encode(encoded_csr, csr_block)
+	pem.Encode(encoded_key, pkey_block)
+
+	csr_str = encoded_csr.String()
+	key_str = encoded_key.String()
+	return
 }
