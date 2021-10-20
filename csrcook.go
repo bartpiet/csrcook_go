@@ -2,17 +2,74 @@ package main
 
 import "fmt"
 import "strings"
+import "strconv"
 import "crypto/rsa"
 import "crypto/rand"
 import "crypto/x509"
 import "crypto/x509/pkix"
 import "encoding/pem"
+import "net/http"
+import "net/url"
 
 func main() {
-	csr, key := generateKeyAndCsr(2048, map[string]string{})
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/", fs)
+	http.HandleFunc("/generate", generateHandler)
+	http.ListenAndServe(":8080", nil)
+}
 
-	fmt.Println(csr)
-	fmt.Println(key)
+func generateHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	cn := r.Form["CN"][0]
+	fields := map[string]string{}
+
+	size, fields, _ := extractFields(r.Form)
+	csr, key := generateKeyAndCsr(size, fields)
+
+	w.Header().Set("Content-Type", "application/x-pem-file")
+	w.Header().Set("Content-Disposition", "attachment; filename=\""+cn+".pem\"")
+
+	fmt.Fprintf(w, "%s", csr+key)
+}
+
+func extractFields(f url.Values) (int, map[string]string, error) {
+	var bitsize int
+	fields := map[string]string{}
+
+	if f["bitsize"] != nil {
+		str_bitsize := f["bitsize"][0]
+		size, err := strconv.Atoi(str_bitsize)
+		if err != nil {
+			bitsize = 1024
+		} else {
+			bitsize = size
+		}
+
+	} else {
+		bitsize = 1024
+	}
+
+	if f["C"][0] != "" {
+		fields["C"] = f["C"][0]
+	}
+	if f["CN"][0] != "" {
+		fields["CN"] = f["CN"][0]
+	}
+	if f["O"][0] != "" {
+		fields["O"] = f["O"][0]
+	}
+	if f["OU"][0] != "" {
+		fields["OU"] = f["OU"][0]
+	}
+	if f["L"][0] != "" {
+		fields["L"] = f["L"][0]
+	}
+	if f["ST"][0] != "" {
+		fields["ST"] = f["ST"][0]
+	}
+
+	return bitsize, fields, nil
 }
 
 func generateKeyAndCsr(bitsize int, subjectFields map[string]string) (csr_str string, key_str string) {

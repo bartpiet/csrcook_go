@@ -1,0 +1,38 @@
+html {
+  font-family: sans-serif;
+}
+
+body{
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+}
+
+label {
+  display: inline-block;
+  width: 300px;
+}
+
+#bitsizes {
+  display: inline-block;
+}
+#bitsizes label {
+  display: inline-block;
+  vertical-align: middle;
+  width: auto;
+}
+#bitsizes input {
+  vertical-align: middle;
+}
+
+
+input {
+  display: inline-block;
+  vertical-align: middle;
+  padding: 5px;
+}
+
+output {
+  font-family: monospace;
+}
+

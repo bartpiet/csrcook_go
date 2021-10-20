@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSR Cook</title>
+    <link rel="stylesheet" href="/styles.css">
+    <meta charset="utf-8">
+  </head>
+
+  <body>
+    <h1>👨‍🍳 a simple CSR generator</h1>
+	<form action="/generate" method="post">
+      <p>
+        <label>A 2-letter country code</label>
+        <input name="C" maxlength="2">
+      </p>
+      <p>
+        <label>State or Province Name (full name)</label>
+        <input name="ST">
+      </p>
+      <p>
+        <label>Locality Name (eg, city)</label>
+        <input name="L">
+      </p>
+      <p>
+        <label>Organization Name (eg, company)</label>
+        <input name="O">
+      </p>
+      <p>
+        <label>Organizational Unit Name (eg, section)</label>
+        <input name="OU">
+      </p>
+      <p>
+        <label>Common Name</label>
+        <input name="CN" required>
+      </p>
+      <p>
+        <label>Email</label>
+        <input name="emailAddress" type="email">
+      </p>
+      <p>
+        <label>Key bitsize</label>
+		  <span id="bitsizes">
+			<label><input name="bitsize" type="radio" value="1024">1024</label>
+			<label><input name="bitsize" type="radio" value="2048" selected>2048</label>
+			<label><input name="bitsize" type="radio" value="4096">4096</label>
+		  </span>
+      <p>
+        <input type="submit" value="Download CSR and private key in one file">
+      </p>
+
+      <br>
+      <br>
+      <p>In your file, CSR is everything between and including lines
+      <br>
+      <output>-----BEGIN CERTIFICATE REQUEST-----</output>
+      <br>
+      <output>...</output>
+      <br>
+      <output>-----END CERTIFICATE REQUEST-----</output></p>
+      <p>Rest of the file contains private key - put on your server, keep it private and don't loose it ;) Cheers!</p>
+    </form>
+  </body>
+</html>
