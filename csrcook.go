@@ -11,6 +11,7 @@ import "crypto/x509/pkix"
 import "encoding/pem"
 import "net/http"
 import "net/url"
+import "log"
 
 func main() {
 	var port = flag.Int("p", 8080, "port to listen on")
@@ -20,8 +21,8 @@ func main() {
 	http.Handle("/", fs)
 	http.HandleFunc("/generate", generateHandler)
 
-	fmt.Printf("Listening on port %v ...", *port)
-	http.ListenAndServe(":"+strconv.Itoa(*port), nil)
+	fmt.Printf("Listening on port %v ...\n", *port)
+	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(*port), nil))
 }
 
 func generateHandler(w http.ResponseWriter, r *http.Request) {
