@@ -1,5 +1,6 @@
 package main
 
+import "flag"
 import "fmt"
 import "strings"
 import "strconv"
@@ -12,10 +13,15 @@ import "net/http"
 import "net/url"
 
 func main() {
+	var port = flag.Int("p", 8080, "port to listen on")
+	flag.Parse()
+
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
 	http.HandleFunc("/generate", generateHandler)
-	http.ListenAndServe(":8080", nil)
+
+	fmt.Printf("Listening on port %v ...", *port)
+	http.ListenAndServe(":"+strconv.Itoa(*port), nil)
 }
 
 func generateHandler(w http.ResponseWriter, r *http.Request) {
