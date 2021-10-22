@@ -3,6 +3,8 @@ package main
 import "flag"
 import "fmt"
 import "strings"
+import "io/fs"
+import "embed"
 import "strconv"
 import "crypto/rsa"
 import "crypto/rand"
@@ -13,12 +15,19 @@ import "net/http"
 import "net/url"
 import "log"
 
+//go:embed static/*
+var static embed.FS
+
 func main() {
 	var port = flag.Int("p", 8080, "port to listen on")
 	flag.Parse()
 
-	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/", fs)
+	serverRoot, err := fs.Sub(static, "static")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	http.Handle("/", http.FileServer(http.FS(serverRoot)))
 	http.HandleFunc("/generate", generateHandler)
 
 	fmt.Printf("Listening on port %v ...\n", *port)
