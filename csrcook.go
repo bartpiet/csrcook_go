@@ -10,6 +10,7 @@ import "crypto/rsa"
 import "crypto/rand"
 import "crypto/x509"
 import "crypto/x509/pkix"
+import "encoding/asn1"
 import "encoding/pem"
 import "net/http"
 import "net/url"
@@ -84,6 +85,9 @@ func extractFields(f url.Values) (int, map[string]string, error) {
 	if f["ST"][0] != "" {
 		fields["ST"] = f["ST"][0]
 	}
+	if f["emailAddress"][0] != "" {
+		fields["emailAddress"] = f["emailAddress"][0]
+	}
 
 	return bitsize, fields, nil
 }
@@ -149,6 +153,20 @@ func prepareRequestTemplate(subjectFields map[string]string) *x509.CertificateRe
 	}
 	if subjectFields["CN"] != "" {
 		subject.CommonName = subjectFields["CN"]
+	}
+
+	var oidEmailAddress = asn1.ObjectIdentifier{1, 2, 840, 113549, 1, 9, 1}
+
+	if subjectFields["emailAddress"] != "" {
+		subject.ExtraNames = []pkix.AttributeTypeAndValue{
+            {
+                Type:  oidEmailAddress,
+                Value: asn1.RawValue{
+                    Tag:   asn1.TagIA5String,
+                    Bytes: []byte(subjectFields["emailAddress"]),
+                },
+            },
+        }
 	}
 
 	tpl.Subject = *subject
