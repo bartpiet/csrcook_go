@@ -67,26 +67,13 @@ func extractFields(f url.Values) (int, map[string]string, error) {
 		bitsize = 1024
 	}
 
-	if f["C"][0] != "" {
-		fields["C"] = f["C"][0]
-	}
-	if f["CN"][0] != "" {
-		fields["CN"] = f["CN"][0]
-	}
-	if f["O"][0] != "" {
-		fields["O"] = f["O"][0]
-	}
-	if f["OU"][0] != "" {
-		fields["OU"] = f["OU"][0]
-	}
-	if f["L"][0] != "" {
-		fields["L"] = f["L"][0]
-	}
-	if f["ST"][0] != "" {
-		fields["ST"] = f["ST"][0]
-	}
-	if f["emailAddress"][0] != "" {
-		fields["emailAddress"] = f["emailAddress"][0]
+	field_names := []string{"C", "CN", "O", "OU", "L", "ST", "emailAddress"}
+
+	for i := 0; i < len(field_names); i++ {
+		field_name := field_names[i]
+		if f[field_name][0] != "" {
+			fields[field_name] = f[field_name][0]
+		}
 	}
 
 	return bitsize, fields, nil
